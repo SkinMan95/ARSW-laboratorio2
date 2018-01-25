@@ -24,7 +24,7 @@ public class Main {
         Runtime rt = Runtime.getRuntime();
         
         List<Integer> numThreads = new ArrayList<>();
-        numThreads.add(1);
+        //numThreads.add(1);
         numThreads.add(rt.availableProcessors());
         numThreads.add(2 * rt.availableProcessors());
         numThreads.add(50);

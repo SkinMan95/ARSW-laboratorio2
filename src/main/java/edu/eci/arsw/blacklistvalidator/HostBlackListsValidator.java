@@ -4,6 +4,7 @@ import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +33,8 @@ public class HostBlackListsValidator {
         
         int ocurrencesCount = 0;
         
+        AtomicInteger globalCounter = new AtomicInteger();
+        
         HostBlacklistsDataSourceFacade skds = HostBlacklistsDataSourceFacade.getInstance();
         
         int checkedListsCount = 0;
@@ -45,7 +48,7 @@ public class HostBlackListsValidator {
         int size = skds.getRegisteredServersCount();
         int delta = size / numThreads;
         for (int i = 0; i < size; i += delta) {
-            validators.add(new ParallelIPAddressValidator(ipaddress, i, Math.min(i+delta, size)));
+            validators.add(new ParallelIPAddressValidator(ipaddress, i, Math.min(i+delta, size), globalCounter, BLACK_LIST_ALARM_COUNT));
 //            System.out.println("Intervalo: " + i + " ; " + Math.min(i+delta, size));
         }
         
@@ -62,6 +65,8 @@ public class HostBlackListsValidator {
                 LOG.log(Level.SEVERE, "ERROR: " + ex.getMessage());
             }
         }
+        
+        System.out.println("Global Blacklist counter:" + globalCounter.get());
         
         for (int i = 0; i < numThreads && ocurrencesCount < BLACK_LIST_ALARM_COUNT; i++) {
             ParallelIPAddressValidator val = validators.get(i);
