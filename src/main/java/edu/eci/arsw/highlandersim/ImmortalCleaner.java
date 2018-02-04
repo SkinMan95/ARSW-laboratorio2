@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,12 +19,15 @@ public class ImmortalCleaner extends Thread {
 
     private static ImmortalCleaner instance;
 
+    private final AtomicBoolean isStopped;
+    
     private final List<Immortal> immortalList;
     private final Queue<Immortal> readyToRemove;
 
-    private ImmortalCleaner(List<Immortal> list) {
+    private ImmortalCleaner(List<Immortal> list, AtomicBoolean isStopped) {
         this.immortalList = list;
         readyToRemove = new ConcurrentLinkedQueue<>();
+        this.isStopped = isStopped;
     }
 
     public static ImmortalCleaner getInstance() {
@@ -31,9 +35,9 @@ public class ImmortalCleaner extends Thread {
         return instance;
     }
 
-    public static ImmortalCleaner getInstance(List<Immortal> list) {
+    public static ImmortalCleaner getInstance(List<Immortal> list, AtomicBoolean isStopped) {
         if (instance == null) {
-            instance = new ImmortalCleaner(list);
+            instance = new ImmortalCleaner(list, isStopped);
         }
         return instance;
     }
@@ -47,7 +51,7 @@ public class ImmortalCleaner extends Thread {
 
     @Override
     public void run() {
-        while (immortalList.size() > 1) {
+        while (immortalList.size() > 1 && ! isStopped.get()) {
             if (!readyToRemove.isEmpty()) {
                 synchronized (immortalList) {
                     while (!readyToRemove.isEmpty()) {

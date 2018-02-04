@@ -21,10 +21,11 @@ public class Immortal extends Thread {
     private final Random r = new Random(System.currentTimeMillis());
 
     private AtomicBoolean isPaused;
+    private AtomicBoolean isStopped;
 
     private Thread originalThread;
 
-    public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb, AtomicBoolean isPaused, Thread originalThread) {
+    public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb, AtomicBoolean isPaused, AtomicBoolean isStopped, Thread originalThread) {
         super(name);
         this.updateCallback = ucb;
         this.name = name;
@@ -32,6 +33,7 @@ public class Immortal extends Thread {
         this.health = health;
         this.defaultDamageValue = defaultDamageValue;
         this.isPaused = isPaused;
+        this.isStopped = isStopped;
         this.originalThread = originalThread;
     }
 
@@ -40,7 +42,7 @@ public class Immortal extends Thread {
     }
     
     public void run() {
-        while (! this.isDead()) {
+        while (! this.isDead() && !this.isStopped.get()) {
             while (isPaused.get()) {
                 synchronized (originalThread) {
                     try {
@@ -75,7 +77,7 @@ public class Immortal extends Thread {
             }
         }
         
-        assert this.isDead();
+        assert this.isDead() || isStopped.get();
         ImmortalCleaner.getInstance().removeDeadImmortal(this);
     }
 

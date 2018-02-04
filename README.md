@@ -64,7 +64,6 @@ Sincronización y Dead-Locks.
 
 11. Para finalizar, implemente la opción STOP.
 
-<!--
 ### Criterios de evaluación
 
 1. Parte I.
@@ -84,6 +83,4 @@ Sincronización y Dead-Locks.
 		* Se cumple con el invariante al usar la aplicación con 10, 100 o 1000 hilos.
 		* La aplicación puede reanudar y finalizar(stop) su ejecución.
 		
-		-->
-
 <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />Este contenido hace parte del curso Arquitecturas de Software del programa de Ingeniería de Sistemas de la Escuela Colombiana de Ingeniería, y está licenciado como <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
