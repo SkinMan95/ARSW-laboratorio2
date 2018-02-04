@@ -43,6 +43,7 @@ public class ControlFrame extends JFrame {
     private final JScrollPane scrollPane;
     private final JTextField numOfImmortals;
 
+    private final JButton btnStart;
     private final JButton btnStop;
 
     /**
@@ -82,7 +83,7 @@ public class ControlFrame extends JFrame {
         isStopped = new AtomicBoolean();
         originalThread = Thread.currentThread();
 
-        final JButton btnStart = new JButton("Start");
+        btnStart = new JButton("Start");
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -175,13 +176,14 @@ public class ControlFrame extends JFrame {
 
         ImmortalCleaner.getInstance().start();
 
+        btnStart.setEnabled(false);
         btnStop.setEnabled(true);
     }
 
     private void stopGame() {
-        this.pauseGame();
         isStopped.set(true);
         btnStop.setEnabled(false);
+        this.pauseGame();
         System.out.println("Game stopped");
     }
 

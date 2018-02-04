@@ -40,9 +40,9 @@ public class Immortal extends Thread {
     public boolean isDead() {
         return health <= 0;
     }
-    
+
     public void run() {
-        while (! this.isDead() && !this.isStopped.get()) {
+        while (!this.isDead() && !this.isStopped.get()) {
             while (isPaused.get()) {
                 synchronized (originalThread) {
                     try {
@@ -53,20 +53,22 @@ public class Immortal extends Thread {
                 }
             }
 
-            Immortal im;
+            Immortal im = null;
 
-            int myIndex = immortalsPopulation.indexOf(this);
+            while ((im == null || im == this) && immortalsPopulation.size() > 1
+                    && !isStopped.get()) { // retries until is a valid immortal (dead or alive)
 
-            int nextFighterIndex = r.nextInt(immortalsPopulation.size());
+                int myIndex = immortalsPopulation.indexOf(this);
 
-            //avoid self-fight
-            if (nextFighterIndex == myIndex) {
-                nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+                int nextFighterIndex = r.nextInt(immortalsPopulation.size());
+
+                //avoid self-fight
+                if (nextFighterIndex == myIndex) {
+                    nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+                }
+
+                im = immortalsPopulation.get(nextFighterIndex);
             }
-
-            im = immortalsPopulation.get(nextFighterIndex);
-            
-            assert im != this;
 
             this.fight(im);
 
@@ -76,20 +78,25 @@ public class Immortal extends Thread {
                 e.printStackTrace();
             }
         }
-        
+
         assert this.isDead() || isStopped.get();
         ImmortalCleaner.getInstance().removeDeadImmortal(this);
     }
 
     public void fight(Immortal i2) {
-        if (i2.getHealth() > 0) {
-            synchronized (i2) {
+        boolean shouldModify;
+        synchronized (i2) {
+            shouldModify = i2.getHealth() > 0;
+            if (shouldModify) {
                 i2.changeHealth(i2.getHealth() - defaultDamageValue);
             }
-            
-            synchronized(this) {
+        }
+
+        if (shouldModify) {
+            synchronized (this) {
                 this.changeHealth(this.getHealth() + defaultDamageValue);
             }
+
             updateCallback.processReport("Fight: " + this + " vs " + i2 + "\n");
         } else {
             updateCallback.processReport(this + " says:" + i2 + " is already dead!\n");
