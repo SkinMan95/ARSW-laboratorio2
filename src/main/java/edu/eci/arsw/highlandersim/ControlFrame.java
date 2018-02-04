@@ -21,11 +21,11 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JScrollBar;
 
 public class ControlFrame extends JFrame {
+
+    private static final long serialVersionUID = 1L;
 
     private static final int DEFAULT_IMMORTAL_HEALTH = 100;
     private static final int DEFAULT_DAMAGE_VALUE = 10;
@@ -33,20 +33,23 @@ public class ControlFrame extends JFrame {
     private static AtomicBoolean isPaused;
     private static Thread originalThread;
 
-    private JPanel contentPane;
+    private final JPanel contentPane;
 
     private List<Immortal> immortals;
 
-    private JTextArea output;
+    private final JTextArea output;
     private JLabel statisticsLabel;
-    private JScrollPane scrollPane;
-    private JTextField numOfImmortals;
+    private final JScrollPane scrollPane;
+    private final JTextField numOfImmortals;
 
     /**
      * Launch the application.
+     *
+     * @param args
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     ControlFrame frame = new ControlFrame();
@@ -77,8 +80,8 @@ public class ControlFrame extends JFrame {
 
         final JButton btnStart = new JButton("Start");
         btnStart.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-
                 immortals = setupInmortals();
 
                 if (immortals != null) {
@@ -87,23 +90,19 @@ public class ControlFrame extends JFrame {
                     }
                 }
 
-                btnStart.setEnabled(false);
+                ImmortalCleaner.getInstance().start();
 
+                btnStart.setEnabled(false);
             }
         });
         toolBar.add(btnStart);
 
         JButton btnPauseAndCheck = new JButton("Pause and check");
         btnPauseAndCheck.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
 
-                isPaused.set(true);
-
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                ControlFrame.this.pauseGame();
 
                 int sum = 0;
                 for (Immortal im : immortals) {
@@ -111,6 +110,7 @@ public class ControlFrame extends JFrame {
                 }
 
                 statisticsLabel.setText("<html>" + immortals.toString() + "<br>Health sum:" + sum);
+                System.out.println("Game paused (Size of list: " + immortals.size() + ")");
             }
         });
         toolBar.add(btnPauseAndCheck);
@@ -118,11 +118,9 @@ public class ControlFrame extends JFrame {
         JButton btnResume = new JButton("Resume");
 
         btnResume.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                isPaused.set(false);
-                synchronized (originalThread) {
-                    originalThread.notifyAll();
-                }
+                ControlFrame.this.resumeGame();
             }
         });
 
@@ -160,6 +158,7 @@ public class ControlFrame extends JFrame {
             int ni = Integer.parseInt(numOfImmortals.getText());
 
             List<Immortal> il = new LinkedList<Immortal>();
+            ImmortalCleaner.getInstance(il);
 
             for (int i = 0; i < ni; i++) {
                 Immortal i1 = new Immortal("im" + i, il, DEFAULT_IMMORTAL_HEALTH, DEFAULT_DAMAGE_VALUE, ucb, isPaused, originalThread);
@@ -171,6 +170,21 @@ public class ControlFrame extends JFrame {
             return null;
         }
 
+    }
+
+    public void resumeGame() {
+        isPaused.set(false);
+        synchronized (originalThread) {
+            originalThread.notifyAll();
+        }
+    }
+
+    public void pauseGame() {
+        isPaused.set(true);
+    }
+
+    public boolean isPaused() {
+        return isPaused.get();
     }
 
 }

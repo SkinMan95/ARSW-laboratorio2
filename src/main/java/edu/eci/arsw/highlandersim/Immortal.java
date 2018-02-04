@@ -35,8 +35,12 @@ public class Immortal extends Thread {
         this.originalThread = originalThread;
     }
 
+    public boolean isDead() {
+        return health <= 0;
+    }
+    
     public void run() {
-        while (true) {
+        while (! this.isDead()) {
             while (isPaused.get()) {
                 synchronized (originalThread) {
                     try {
@@ -59,6 +63,8 @@ public class Immortal extends Thread {
             }
 
             im = immortalsPopulation.get(nextFighterIndex);
+            
+            assert im != this;
 
             this.fight(im);
 
@@ -68,6 +74,9 @@ public class Immortal extends Thread {
                 e.printStackTrace();
             }
         }
+        
+        assert this.isDead();
+        ImmortalCleaner.getInstance().removeDeadImmortal(this);
     }
 
     public void fight(Immortal i2) {

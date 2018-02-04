@@ -13,6 +13,17 @@ a 100*N.
 
 3. Ejecute la aplicación y verifique cómo funcionan las opción ‘pause and check’. Se cumple el invariante?.
 
-R: No se cumple, aumenta con el tiempo.
+R: No se cumple, aumenta el numero con el tiempo.
 
+10. * Analizando el esquema de funcionamiento de la simulación, esto podría crear una condición de carrera?
+    R: Se convierte en una condicion de carrera si los inmortales muertos se eliminan a si mismos de la lista
+    general al finalizar su ciclo de ejecucion. Una posible solucion para que solo sea un hilo el que realice
+    modificaciones sobre la lista es que haya un hilo diferente a los inmortales que este verificando si hay
+    inmortales muertos por medio de recibir notificaciones de los inmortales que estan muertos (asi no tiene
+    que estar buscando la lista y preguntar si estan muertos), luego en un momento determinado bloquear el
+    acceso de la lista para modificarla y devolver luego el control al acceso de lectura de los inmortales.
+    Es decir, varios leyendo y ninguno escribiendo O ninguno leyendo y solo uno escribiendo. Esto para mantener
+    la consistencia de la informacion.
 
+    Otra condicion de carrera seria el acceso no-atomico de los inmortales a el tamano de la lista para
+    realizar una seleccion aleatoria en la misma y seleccionar su contrincante.
