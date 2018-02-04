@@ -1,7 +1,6 @@
 package edu.eci.arsw.blacklistvalidator;
 
 import java.util.List;
-import java.lang.Runtime;
 import java.util.ArrayList;
 
 /**

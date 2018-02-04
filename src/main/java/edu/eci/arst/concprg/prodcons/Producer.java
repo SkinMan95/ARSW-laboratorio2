@@ -2,7 +2,7 @@ package edu.eci.arst.concprg.prodcons;
 
 import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +30,7 @@ public class Producer extends Thread {
             try {
                 dataSeed = dataSeed + rand.nextInt(100);
                 System.out.println("Producer added " + dataSeed);
-                ((LinkedBlockingQueue)queue).put(dataSeed);
+                ((BlockingQueue)queue).put(dataSeed);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
             }

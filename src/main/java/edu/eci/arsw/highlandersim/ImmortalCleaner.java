@@ -1,7 +1,5 @@
 package edu.eci.arsw.highlandersim;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -12,7 +12,7 @@ public class Immortal extends Thread {
 
     private int health;
 
-    private int defaultDamageValue;
+    private final int defaultDamageValue;
 
     private final List<Immortal> immortalsPopulation;
 
@@ -20,10 +20,10 @@ public class Immortal extends Thread {
 
     private final Random r = new Random(System.currentTimeMillis());
 
-    private AtomicBoolean isPaused;
-    private AtomicBoolean isStopped;
+    private final AtomicBoolean isPaused;
+    private final AtomicBoolean isStopped;
 
-    private Thread originalThread;
+    private final Thread originalThread;
 
     public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb, AtomicBoolean isPaused, AtomicBoolean isStopped, Thread originalThread) {
         super(name);
@@ -41,6 +41,7 @@ public class Immortal extends Thread {
         return health <= 0;
     }
 
+    @Override
     public void run() {
         while (!this.isDead() && !this.isStopped.get()) {
             while (isPaused.get()) {

@@ -11,15 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ParallelIPAddressValidator extends Thread{
     
-    private String ipaddress;
-    private int initialServer;
-    private int finalServer;
+    private final String ipaddress;
+    private final int initialServer;
+    private final int finalServer;
     
     private int blacklistLimit;
-    private AtomicInteger globalCounter;
+    private final AtomicInteger globalCounter;
     
     private int blacklists;
-    private List<Integer> ocurrences;
+    private final List<Integer> ocurrences;
     private int checkedCount;
     
     HostBlacklistsDataSourceFacade skds = HostBlacklistsDataSourceFacade.getInstance();
@@ -31,7 +31,7 @@ public class ParallelIPAddressValidator extends Thread{
         this.globalCounter = globalCounter;
         this.blacklistLimit = blacklistLimit;
         
-        this.ocurrences = new ArrayList<Integer>();
+        this.ocurrences = new ArrayList<>();
     }
     
     @Override

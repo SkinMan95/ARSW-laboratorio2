@@ -39,7 +39,7 @@ public class ControlFrame extends JFrame {
     private List<Immortal> immortals;
 
     private final JTextArea output;
-    private JLabel statisticsLabel;
+    private final JLabel statisticsLabel;
     private final JScrollPane scrollPane;
     private final JTextField numOfImmortals;
 
@@ -150,7 +150,7 @@ public class ControlFrame extends JFrame {
         try {
             int ni = Integer.parseInt(numOfImmortals.getText());
 
-            List<Immortal> il = new LinkedList<Immortal>();
+            List<Immortal> il = new LinkedList<>();
             ImmortalCleaner.getInstance(il, isStopped);
 
             for (int i = 0; i < ni; i++) {

@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  */
 public class Consumer extends Thread{
     
-    private Queue<Integer> queue;
+    private final Queue<Integer> queue;
     
     
     public Consumer(Queue<Integer> queue){
