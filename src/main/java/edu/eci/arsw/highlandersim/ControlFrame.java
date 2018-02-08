@@ -21,6 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JScrollBar;
 
 public class ControlFrame extends JFrame {
@@ -32,6 +35,7 @@ public class ControlFrame extends JFrame {
 
     private static AtomicBoolean isPaused;
     private static AtomicBoolean isStopped;
+    private static AtomicInteger immortalsPaused;
     private static Thread originalThread;
 
     private final JPanel contentPane;
@@ -81,6 +85,7 @@ public class ControlFrame extends JFrame {
 
         isPaused = new AtomicBoolean();
         isStopped = new AtomicBoolean();
+        immortalsPaused = new AtomicInteger();
         originalThread = Thread.currentThread();
 
         btnStart = new JButton("Start");
@@ -197,6 +202,15 @@ public class ControlFrame extends JFrame {
     private void pauseGame() {
         isPaused.set(true);
 
+        while(immortalsPaused.get() != immortals.size()) {
+            System.out.println(immortalsPaused.get());
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ControlFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
         int sum = 0;
         for (Immortal im : immortals) {
             sum += im.getHealth();
@@ -206,6 +220,13 @@ public class ControlFrame extends JFrame {
         System.out.println("Game paused (Size of list: " + immortals.size() + ")");
     }
 
+    public static void reportImmortalPaused() {
+        immortalsPaused.addAndGet(1);
+    }
+    
+    public static void reportImmortalResumed() {
+        immortalsPaused.addAndGet(-1);
+    }
 }
 
 class TextAreaUpdateReportCallback implements ImmortalUpdateReportCallback {

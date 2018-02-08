@@ -45,6 +45,8 @@ public class Immortal extends Thread {
     public void run() {
         while (!this.isDead() && !this.isStopped.get()) {
             while (isPaused.get()) {
+                ControlFrame.reportImmortalPaused();
+                
                 synchronized (originalThread) {
                     try {
                         originalThread.wait();
@@ -52,6 +54,8 @@ public class Immortal extends Thread {
                         Logger.getLogger(Immortal.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                
+                ControlFrame.reportImmortalResumed();
             }
 
             Immortal im = null;
